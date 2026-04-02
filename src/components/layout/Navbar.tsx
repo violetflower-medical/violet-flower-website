@@ -151,24 +151,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-3 lg:hidden">
-            <div 
-              className="relative h-8 w-16 glass border border-border rounded-full p-0.5 flex items-center cursor-pointer shadow-sm select-none"
-              onClick={toggleLanguage}
-            >
-              <motion.div 
-                className="absolute h-7 w-[30px] bg-primary rounded-full shadow-sm z-0"
-                animate={{ x: locale === 'en' ? 29 : 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              />
-              <div className={cn(
-                "relative z-10 flex-1 text-center text-[8px] font-black tracking-tighter uppercase transition-colors duration-300",
-                locale === 'ar' ? "text-white" : "text-muted-foreground"
-              )}>AR</div>
-              <div className={cn(
-                "relative z-10 flex-1 text-center text-[8px] font-black tracking-tighter uppercase transition-colors duration-300",
-                locale === 'en' ? "text-white" : "text-muted-foreground"
-              )}>EN</div>
-            </div>
+
             <button
               className="p-2 text-foreground hover:bg-accent rounded-full transition-colors"
               onClick={() => setIsOpen(!isOpen)}
@@ -197,8 +180,8 @@ export default function Navbar() {
               exit={{ x: dir === 'ltr' ? '-100%' : '100%', opacity: 0 }}
               transition={{ type: "spring", damping: 35, stiffness: 400 }}
               className={cn(
-                "fixed top-0 bottom-0 w-[78%] max-w-[320px] bg-white z-[52] lg:hidden shadow-2xl flex flex-col p-6 overflow-y-auto no-scrollbar",
-                dir === 'ltr' ? "left-0" : "right-0"
+                "fixed top-0 bottom-0 w-[70%] max-w-[300px] bg-white/95 backdrop-blur-xl border-r border-primary/10 z-[55] lg:hidden shadow-2xl flex flex-col p-6 overflow-y-auto no-scrollbar transition-all duration-300",
+                dir === 'ltr' ? "left-0" : "right-0 border-r-0 border-l border-primary/10"
               )}
             >
               <div className="flex items-center justify-between mb-12">
@@ -207,9 +190,9 @@ export default function Navbar() {
                 </div>
                 <button 
                   onClick={() => setIsOpen(false)}
-                  className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-secondary border border-border mt-2"
+                  className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-secondary border border-border mt-2"
                 >
-                  <X size={24} />
+                  <X size={20} />
                 </button>
               </div>
 
@@ -221,21 +204,21 @@ export default function Navbar() {
                       key={link.href}
                       href={link.href}
                       className={cn(
-                        'py-6 text-2xl font-bold flex items-center justify-between group border-b border-border/40 last:border-0 transition-all active:scale-[0.98]',
-                        isActive ? 'text-primary shadow-sm px-2' : 'text-foreground/90',
-                        locale === 'ar' ? 'font-arabic text-3xl' : 'font-outfit'
+                        'py-5 text-lg font-bold flex items-center justify-between group border-b border-border/40 last:border-0 transition-all active:scale-[0.98]',
+                        isActive ? 'text-primary' : 'text-secondary/80',
+                        locale === 'ar' ? 'font-arabic text-xl' : 'font-outfit'
                       )}
                       onClick={() => setIsOpen(false)}
                     >
                       <div className="flex items-center gap-4">
-                        {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                        {isActive && <motion.div layoutId="mobileActiveDot" className="w-1.5 h-1.5 rounded-full bg-primary" />}
                         <span>{link.name}</span>
                       </div>
                       <ChevronRight 
-                        size={24} 
+                        size={18} 
                         className={cn(
-                          "text-primary/40 group-hover:text-primary transition-all duration-300", 
-                          dir === 'rtl' ? "rotate-180 group-hover:-translate-x-2" : "group-hover:translate-x-2",
+                          "text-muted-foreground/40 group-hover:text-primary transition-all duration-300", 
+                          dir === 'rtl' ? "rotate-180 group-hover:-translate-x-1" : "group-hover:translate-x-1",
                           isActive && "text-primary opacity-100"
                         )} 
                       />
