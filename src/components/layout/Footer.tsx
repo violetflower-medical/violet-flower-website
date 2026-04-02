@@ -1,14 +1,33 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Mail, Phone, MapPin, Activity, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
 
 export default function Footer() {
   const { t, dir, locale } = useLanguage();
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchSettings() {
+      const { data } = await supabase.from('site_settings').select('*').limit(1).single();
+      if (data) {
+        setSettings(data);
+      }
+    }
+    fetchSettings();
+  }, []);
+
+  let companyName = settings ? (locale === 'ar' ? (settings.company_name_ar || 'زهرة البنفسج') : (settings.company_name_en || 'Violet Flower')) : (locale === 'ar' ? 'زهرة البنفسج' : 'Violet Flower');
+  if (locale === 'en' && !companyName.toLowerCase().includes('company')) companyName += ' Company';
+  if (locale === 'ar' && !companyName.includes('شركة')) companyName = 'شركة ' + companyName;
+  const address = settings ? (locale === 'ar' ? (settings.address_ar || t('address')) : (settings.address_en || t('address'))) : t('address');
+  const phoneMain = settings?.phone_main || t('phone_num');
+  const emailInfo = settings?.email_info || 'info@violetflower.com';
 
   return (
     <footer className={cn("bg-secondary text-white relative overflow-hidden", locale === 'ar' ? "font-arabic" : "")} dir={dir}>
@@ -32,11 +51,11 @@ export default function Footer() {
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-xl md:text-3xl tracking-tight leading-none font-outfit">
-                  Violet Flower
+                  {companyName}
                 </span>
                 <span className={cn(
-                  "text-[9px] md:text-xs uppercase font-bold text-primary/80 mt-1.5 md:mt-2 whitespace-nowrap",
-                  locale === 'en' ? "tracking-[0.15em] md:tracking-[0.2em]" : "tracking-normal"
+                  "text-[8.5px] md:text-xs font-bold text-primary/80 mt-1.5 md:mt-2 max-w-[250px] md:max-w-[300px] leading-snug",
+                  locale === 'en' ? "tracking-wide" : "tracking-normal"
                 )}>
                   {t('tagline')}
                 </span>
@@ -48,12 +67,21 @@ export default function Footer() {
             </p>
 
             <div className="flex items-center gap-4">
-              <a href="#" className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-all group" aria-label="LinkedIn">
-                <Activity size={18} className="text-white group-hover:scale-110 transition-transform md:w-5 md:h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-all group" aria-label="Twitter">
-                <ShieldCheck size={18} className="text-white group-hover:scale-110 transition-transform md:w-5 md:h-5" />
-              </a>
+              {settings?.linkedin_url && (
+                <a href={settings.linkedin_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-all group" aria-label="LinkedIn">
+                  <Activity size={18} className="text-white group-hover:scale-110 transition-transform md:w-5 md:h-5" />
+                </a>
+              )}
+              {settings?.twitter_url && (
+                <a href={settings.twitter_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-all group" aria-label="Twitter">
+                  <ShieldCheck size={18} className="text-white group-hover:scale-110 transition-transform md:w-5 md:h-5" />
+                </a>
+              )}
+              {settings?.facebook_url && (
+                <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-all group" aria-label="Facebook">
+                  <Activity size={18} className="text-white group-hover:scale-110 transition-transform md:w-5 md:h-5" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -114,7 +142,7 @@ export default function Footer() {
                 </div>
                 <div className="flex flex-col text-start">
                   <span className="text-white/50 text-[10px] md:text-xs font-bold uppercase tracking-widest">{t('location')}</span>
-                  <span className="text-white/80 leading-snug text-sm md:text-base">{t('address')}</span>
+                  <span className="text-white/80 leading-snug text-sm md:text-base">{address}</span>
                 </div>
               </div>
               
@@ -124,8 +152,8 @@ export default function Footer() {
                 </div>
                 <div className="flex flex-col text-start">
                   <span className="text-white/50 text-[10px] md:text-xs font-bold uppercase tracking-widest">{t('support')}</span>
-                  <a href="tel:+966123456789" className="text-white/80 hover:text-primary transition-colors text-base md:text-lg font-outfit" dir="ltr">
-                    {t('phone_num')}
+                  <a href={`tel:${phoneMain.replace(/[^0-9+]/g, '')}`} className="text-white/80 hover:text-primary transition-colors text-base md:text-lg font-outfit" dir="ltr">
+                    {phoneMain}
                   </a>
                 </div>
               </div>
@@ -136,8 +164,8 @@ export default function Footer() {
                 </div>
                 <div className="flex flex-col text-start">
                   <span className="text-white/50 text-[10px] md:text-xs font-bold uppercase tracking-widest">{t('email')}</span>
-                  <a href="mailto:info@violetflower.com" className="text-white/80 hover:text-primary transition-colors text-sm md:text-base">
-                    info@violetflower.com
+                  <a href={`mailto:${emailInfo}`} className="text-white/80 hover:text-primary transition-colors text-sm md:text-base">
+                    {emailInfo}
                   </a>
                 </div>
               </div>
@@ -145,10 +173,9 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Copyright Section */}
         <div className="pt-8 md:pt-10 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 text-[11px] md:text-sm font-medium text-white/40">
           <p className="text-center md:text-start leading-relaxed">
-            {t('footer_copyright').replace('{year}', new Date().getFullYear().toString()).replace('{company}', locale === 'en' ? 'Violet Flower Corp.' : 'شركة البنفسجة للزهور')}
+            {t('footer_copyright').replace('{year}', new Date().getFullYear().toString()).replace('{company}', companyName)}
           </p>
           <div className="flex items-center gap-4 md:gap-6">
             <span className="flex items-center gap-2">

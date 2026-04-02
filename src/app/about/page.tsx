@@ -25,7 +25,7 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col w-full overflow-hidden bg-background">
       {/* Header Section */}
-      <section className="relative pt-20 pb-16 md:pt-24 md:pb-20 overflow-hidden bg-accent/30 border-b border-border">
+      <section className="relative pt-32 pb-12 md:pt-40 md:pb-24 overflow-hidden bg-accent/30 border-b border-border">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 blur-[120px] rounded-full translate-x-1/2 pointer-events-none" />
         <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
           <motion.div
@@ -99,28 +99,59 @@ export default function AboutPage() {
               <div className="space-y-4">
                 <h2 className="text-primary font-bold uppercase tracking-[0.2em] text-[10px] md:text-sm">{t('who_we_are')}</h2>
                 <h3 className="text-2xl sm:text-4xl md:text-5xl font-bold font-outfit leading-tight lg:max-w-md">{t('bridging_gap')} <span className="text-gradientLeadingTightLeadingTightLeadingTightLeadingTight">{t('equipment')}</span></h3>
-                <p className="text-base md:text-lg text-muted-foreground leading-relaxed font-bold">
-                  {t('corporate_desc')}
-                </p>
-                <p className="text-sm md:text-base text-muted-foreground leading-relaxed font-medium">
-                  {locale === 'en' 
-                    ? "Our team consists of factory-certified engineers, clinical application specialists, and healthcare strategists who work in unison to deliver the highest standards of diagnostic accuracy. We don't just supply equipment; we architect clinical futures."
-                    : "يتكون فريقنا من مهندسين معتمدين من المصنع، وأخصائيي تطبيقات سريرية، واستراتيجيي رعاية صحية يعملون بانسجام لتقديم أعلى معايير دقة التشخيص. نحن لا نوفر المعدات فحسب؛ نحن نبني المستقبل السريري."}
-                </p>
+                <div className="space-y-4 text-sm md:text-base text-muted-foreground leading-relaxed font-medium">
+                  {locale === 'en' ? (
+                    <>
+                      <p>
+                        Violet Flower Company for Medical Supply, Hospital Furniture, Electromechanical Systems, Waste-Management & IT Infrastructure is a comprehensive healthcare solutions provider based in Riyadh and established in 2008. Over the years, we have evolved into a trusted partner delivering end-to-end solutions for healthcare facilities across Saudi Arabia.
+                      </p>
+                      <p>
+                        Our integrated portfolio covers every essential component required to build, equip, operate, and maintain modern healthcare environments. From medical supplies and hospital furniture to electromechanical works, IT infrastructure, and compliant medical waste-management services, we support healthcare institutions throughout the entire lifecycle of their operations.
+                      </p>
+                      <p>
+                        We operate with full adherence to Saudi regulatory standards, ensuring legal compliance, safety, and quality in every service we provide. Our multidisciplinary capabilities allow us to deliver seamless, coordinated solutions that reduce complexity for our clients and enhance the performance, safety, and sustainability of their facilities.
+                      </p>
+                      <p>
+                        At Violet Flower Company, we believe that healthcare excellence begins with strong infrastructure, reliable equipment, and safe operational systems. By combining engineering expertise, medical-grade products, and advanced technology, we help hospitals and clinics achieve higher efficiency, better patient outcomes, and long-term operational stability.
+                      </p>
+                      <p>
+                        With a reputation built on trust, professionalism, and long-term partnerships, Violet Flower Company continues to grow as a dependable end-to-end healthcare solutions provider for institutions seeking quality, innovation, and operational excellence.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p>
+                        شركة Violet Flower للتوريدات الطبية، والأثاث الطبي، والأنظمة الكهروميكانيكية، وإدارة النفايات، والبنية التحتية لتقنية المعلومات هي مزود شامل لحلول الرعاية الصحية، يقع مقرها في الرياض وتأسست عام 2008. وعلى مدار السنوات، تطورت الشركة لتصبح شريكًا موثوقًا يقدم حلولًا متكاملة وشاملة للمنشآت الصحية في مختلف أنحاء المملكة العربية السعودية.
+                      </p>
+                      <p>
+                        تغطي محفظتنا المتكاملة جميع العناصر الأساسية اللازمة لإنشاء وتجهيز وتشغيل وصيانة بيئات الرعاية الصحية الحديثة. فمن التوريدات الطبية والأثاث الطبي إلى الأعمال الكهروميكانيكية، والبنية التحتية لتقنية المعلومات، وخدمات إدارة النفايات الطبية المتوافقة مع الأنظمة، نحن ندعم المؤسسات الصحية طوال دورة تشغيلها الكاملة.
+                      </p>
+                      <p>
+                        نعمل بالتزام كامل بالأنظمة والمعايير التنظيمية المعتمدة في المملكة العربية السعودية، بما يضمن الامتثال القانوني، والسلامة، والجودة في كل خدمة نقدمها. وتتيح لنا قدراتنا متعددة التخصصات تقديم حلول مترابطة ومنسقة تقلل التعقيد على عملائنا، وتعزز من أداء منشآتهم وسلامتها واستدامتها.
+                      </p>
+                      <p>
+                        في شركة Violet Flower، نؤمن بأن التميز في الرعاية الصحية يبدأ من بنية تحتية قوية، ومعدات موثوقة، وأنظمة تشغيل آمنة. ومن خلال الجمع بين الخبرة الهندسية، والمنتجات الطبية عالية الجودة، والتقنيات المتقدمة، نساعد المستشفيات والعيادات على تحقيق كفاءة أعلى، ونتائج أفضل للمرضى، واستقرار تشغيلي طويل الأمد.
+                      </p>
+                      <p>
+                        وبسمعةٍ بُنيت على الثقة، والاحترافية، والشراكات طويلة المدى، تواصل شركة Violet Flower نموها باعتبارها مزودًا موثوقًا للحلول الصحية المتكاملة للمؤسسات التي تبحث عن الجودة، والابتكار، والتميز التشغيلي.
+                      </p>
+                    </>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-6 md:gap-12 mt-4 pt-8 border-t border-border">
                 <div className="flex flex-col">
-                  <span className="text-2xl md:text-4xl font-bold font-outfit text-primary tracking-tight">40+</span>
-                  <span className="text-[9px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{t('countries_served')}</span>
+                  <span className="text-2xl md:text-4xl font-bold font-outfit text-primary tracking-tight">15+</span>
+                  <span className="text-[9px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{locale === 'en' ? 'Years Experience' : 'سنوات خبرة'}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-2xl md:text-4xl font-bold font-outfit text-primary tracking-tight">1k+</span>
-                  <span className="text-[9px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{t('support_engineers')}</span>
+                  <span className="text-2xl md:text-4xl font-bold font-outfit text-primary tracking-tight">200+</span>
+                  <span className="text-[9px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{locale === 'en' ? 'Facilities Equipped' : 'منشأة مجهزة'}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-2xl md:text-4xl font-bold font-outfit text-primary tracking-tight">12</span>
-                  <span className="text-[9px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{t('global_hubs')}</span>
+                  <span className="text-2xl md:text-4xl font-bold font-outfit text-primary tracking-tight">24/7</span>
+                  <span className="text-[9px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{locale === 'en' ? 'Tech Support' : 'دعم فني'}</span>
                 </div>
               </div>
             </motion.div>
@@ -257,7 +288,7 @@ export default function AboutPage() {
               </div>
               <div className="text-center">
                 <p className="text-base md:text-xl font-bold font-outfit leading-tight">{t('board_directors')}</p>
-                <p className="text-[9px] md:text-xs font-semibold text-white/60 tracking-widest uppercase mt-1.5 font-outfit">Violet Flower Medical & Diagnostics</p>
+                <p className="text-[9px] md:text-xs font-semibold text-white/60 tracking-widest uppercase mt-1.5 font-outfit">Violet Flower Company</p>
               </div>
             </div>
             <div className="w-12 md:w-16 h-px bg-white/30" />

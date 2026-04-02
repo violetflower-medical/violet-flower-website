@@ -1,81 +1,80 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
-  ShoppingBag, 
-  Settings2, 
-  Wrench, 
-  Globe, 
   ArrowRight, 
   CheckCircle2, 
   Activity, 
   ShieldCheck, 
   Clock, 
-  BookOpen 
+  BookOpen,
+  Package,
+  BedDouble,
+  Cog,
+  Trash2,
+  Server,
+  ShoppingBag,
+  Settings2,
+  Wrench,
+  Globe
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/LanguageContext';
+import { supabase } from '@/lib/supabase';
 
 export default function ServicesPage() {
   const { t, dir, locale } = useLanguage();
+  
+  const [services, setServices] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const services = [
-    {
-      title: t('strat_sourcing'),
-      desc: t('strat_sourcing_desc'),
-      icon: <ShoppingBag className="w-12 h-12" />,
-      color: "primary",
-      features: [
-        t('feat_quality_audit'),
-        t('feat_logistics'),
-        t('feat_compliance'),
-        t('feat_negotiations')
-      ]
-    },
-    {
-      title: t('turnkey_projects'),
-      desc: t('turnkey_desc'),
-      icon: <Settings2 className="w-12 h-12" />,
-      color: "secondary",
-      features: [
-        t('feat_design'),
-        t('feat_shielding'),
-        t('feat_commissioning'),
-        t('feat_workflow')
-      ]
-    },
-    {
-      title: t('tech_support_training'),
-      desc: t('tech_support_desc'),
-      icon: <Wrench className="w-12 h-12" />,
-      color: "primary",
-      features: [
-        t('feat_helpline'),
-        t('feat_courses'),
-        t('feat_prev_maint'),
-        t('feat_remote_diag')
-      ]
-    },
-    {
-      title: t('intl_representation'),
-      desc: t('intl_rep_desc'),
-      icon: <Globe className="w-12 h-12" />,
-      color: "secondary",
-      features: [
-        t('feat_moh'),
-        t('feat_hubs'),
-        t('feat_exhibition'),
-        t('feat_warehouse')
-      ]
+  useEffect(() => {
+    async function fetchServices() {
+      setIsLoading(true);
+      
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        setServices(data);
+      } else {
+        setServices([]);
+      }
+      setIsLoading(false);
     }
-  ];
+    
+    fetchServices();
+  }, []);
+
+  const renderIcon = (iconName: string) => {
+    const iconProps = { className: "w-12 h-12" };
+    const icons: Record<string, React.ReactNode> = {
+      'Package': <Package {...iconProps} />,
+      'BedDouble': <BedDouble {...iconProps} />,
+      'Cog': <Cog {...iconProps} />,
+      'Trash2': <Trash2 {...iconProps} />,
+      'Server': <Server {...iconProps} />,
+      'ShoppingBag': <ShoppingBag {...iconProps} />,
+      'Settings2': <Settings2 {...iconProps} />,
+      'Wrench': <Wrench {...iconProps} />,
+      'Globe': <Globe {...iconProps} />,
+      'Activity': <Activity {...iconProps} />,
+      'ShieldCheck': <ShieldCheck {...iconProps} />,
+      'Clock': <Clock {...iconProps} />,
+      'BookOpen': <BookOpen {...iconProps} />
+    };
+    return icons[iconName] || <Settings2 {...iconProps} />;
+  };
 
   return (
     <div className={cn("flex flex-col w-full min-h-screen bg-background", locale === 'ar' ? 'font-arabic' : '')} dir={dir}>
       {/* Hero Section */}
-      <section className="pt-20 pb-16 md:pt-24 md:pb-20 relative overflow-hidden bg-accent/30 border-b border-border">
+      <section className="pt-32 pb-12 md:pt-40 md:pb-24 relative overflow-hidden bg-accent/30 border-b border-border">
         <div className={cn(
           "absolute top-0 w-1/3 h-full medical-gradient/5 blur-[120px] rounded-full translate-x-1/2 pointer-events-none",
           dir === 'ltr' ? 'right-0' : 'left-0'
@@ -94,7 +93,7 @@ export default function ServicesPage() {
             transition={{ delay: 0.1 }}
             className="text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-4 md:mb-6 font-outfit leading-tight"
           >
-            {locale === 'en' ? 'Global' : 'الخدمات'} <span className="text-gradientLeadingTightLeadingTightLeadingTightLeadingTight">{t('global_service_excellence')}</span>
+            {locale === 'en' ? 'Our' : 'نقدم'} <span className="text-gradient">{t('global_service_excellence')}</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -109,64 +108,74 @@ export default function ServicesPage() {
 
       {/* Services Grid (Specific 4 sections) */}
       <section className="py-16 md:py-24 container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-          {services.map((service, i) => (
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              key={i}
-              className="bg-background rounded-[28px] md:rounded-[48px] p-8 md:p-14 border border-border hover:border-primary/20 group transition-all duration-500 shadow-xl shadow-black/5 relative overflow-hidden flex flex-col h-full text-start"
-            >
-              {/* Abstract decorative shape */}
-              <div className={cn(
-                "absolute -top-10 w-40 h-40 rounded-full blur-3xl opacity-5 group-hover:opacity-10 transition-opacity",
-                dir === 'ltr' ? '-right-10' : '-left-10',
-                service.color === "primary" ? "bg-primary" : "bg-secondary"
-              )} />
-              
-              <div className={cn(
-                "w-14 h-14 md:w-20 md:h-20 rounded-2xl md:rounded-3xl glass mb-6 md:mb-10 flex items-center justify-center transition-all group-hover:scale-110 shadow-sm",
-                service.color === "primary" ? "text-primary border-primary/20" : "text-secondary border-secondary/20"
-              )}>
-                {service.icon}
-              </div>
-
-              <h3 className="text-xl md:text-3xl font-bold mb-4 md:mb-6 font-outfit group-hover:text-primary transition-colors md:pr-8 leading-tight">
-                {service.title}
-              </h3>
-              
-              <p className="text-sm md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-10 flex-grow font-bold">
-                {service.desc}
-              </p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 md:mb-12 pt-8 border-t border-border">
-                {service.features.map((feat, j) => (
-                  <div key={j} className="flex items-center gap-3 text-[11px] md:text-sm font-bold text-foreground/80">
-                    <CheckCircle2 size={16} className={cn(
-                        "flex-shrink-0",
-                        service.color === "primary" ? "text-primary" : "text-secondary"
-                    )} /> 
-                    {feat}
-                  </div>
-                ))}
-              </div>
-
-              <Link 
-                href="/contact"
-                className={cn(
-                    "w-full py-4 md:py-5 rounded-2xl font-bold text-sm md:text-lg text-center flex items-center justify-center gap-3 transition-all",
-                    service.color === "primary" 
-                        ? "medical-gradient text-white shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1" 
-                        : "bg-background border border-border hover:border-secondary/50 text-foreground hover:bg-muted"
-                )}
+        {isLoading ? (
+          <div className="flex justify-center items-center py-32">
+            <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+          </div>
+        ) : services.length === 0 ? (
+          <div className="text-center py-20 text-muted-foreground font-bold">
+            {locale === 'en' ? 'No services found.' : 'لم يتم العثور على خدمات.'}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+            {services.map((service, i) => (
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                key={service.id || i}
+                className="bg-background rounded-[28px] md:rounded-[48px] p-8 md:p-14 border border-border hover:border-primary/20 group transition-all duration-500 shadow-xl shadow-black/5 relative overflow-hidden flex flex-col h-full text-start"
               >
-                {t('inquire_service')} <ArrowRight size={20} className={cn("transition-transform duration-300", dir === 'ltr' ? "group-hover:translate-x-1" : "group-hover:-translate-x-1 rotate-180")} />
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+                {/* Abstract decorative shape */}
+                <div className={cn(
+                  "absolute -top-10 w-40 h-40 rounded-full blur-3xl opacity-5 group-hover:opacity-10 transition-opacity",
+                  dir === 'ltr' ? '-right-10' : '-left-10',
+                  service.color_theme === "primary" ? "bg-primary" : "bg-secondary"
+                )} />
+                
+                <div className={cn(
+                  "w-14 h-14 md:w-20 md:h-20 rounded-2xl md:rounded-3xl glass mb-6 md:mb-10 flex items-center justify-center transition-all group-hover:scale-110 shadow-sm",
+                  service.color_theme === "primary" ? "text-primary border-primary/20" : "text-secondary border-secondary/20"
+                )}>
+                  {renderIcon(service.icon_name)}
+                </div>
+
+                <h3 className="text-xl md:text-3xl font-bold mb-4 md:mb-6 font-outfit group-hover:text-primary transition-colors md:pr-8 leading-tight">
+                  {locale === 'ar' ? service.title_ar : service.title_en}
+                </h3>
+                
+                <p className="text-sm md:text-lg text-muted-foreground leading-relaxed mb-8 md:mb-10 flex-grow font-bold">
+                  {locale === 'ar' ? service.description_ar : service.description_en}
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 md:mb-12 pt-8 border-t border-border">
+                  {(locale === 'ar' ? (service.features_ar || []) : (service.features_en || [])).map((feat: string, j: number) => (
+                    <div key={j} className="flex items-center gap-3 text-[11px] md:text-sm font-bold text-foreground/80">
+                      <CheckCircle2 size={16} className={cn(
+                          "flex-shrink-0",
+                          service.color_theme === "primary" ? "text-primary" : "text-secondary"
+                      )} /> 
+                      {feat}
+                    </div>
+                  ))}
+                </div>
+
+                <Link 
+                  href="/contact"
+                  className={cn(
+                      "w-full py-4 md:py-5 rounded-2xl font-bold text-sm md:text-lg text-center flex items-center justify-center gap-3 transition-all",
+                      service.color_theme === "primary" 
+                          ? "medical-gradient text-white shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1" 
+                          : "bg-background border border-border hover:border-secondary/50 text-foreground hover:bg-muted"
+                  )}
+                >
+                  {t('inquire_service')} <ArrowRight size={20} className={cn("transition-transform duration-300", dir === 'ltr' ? "group-hover:translate-x-1" : "group-hover:-translate-x-1 rotate-180")} />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Support Numbers / Emergency Section */}

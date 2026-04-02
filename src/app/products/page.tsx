@@ -1,102 +1,65 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, ArrowRight, CheckCircle2, Zap, Download, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/LanguageContext';
+import { supabase } from '@/lib/supabase';
 
 export default function ProductsPage() {
   const { t, dir, locale } = useLanguage();
   const [activeCategory, setActiveCategory] = useState(t('all_products'));
   const [searchQuery, setSearchQuery] = useState("");
+  
+  const [categories, setCategories] = useState<string[]>([t('all_products')]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const categories = [t('all_products'), t('cat_mri'), t('cat_ultrasound'), t('cat_monitoring'), t('cat_xray'), t('cat_lab')];
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      
+      const { data: dbCategories } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+        
+      if (dbCategories && dbCategories.length > 0) {
+        const catNames = dbCategories.map(c => locale === 'ar' ? c.name_ar : c.name_en);
+        setCategories([t('all_products'), ...catNames]);
+      } else {
+        setCategories([t('all_products'), t('cat_mri'), t('cat_ultrasound'), t('cat_monitoring'), t('cat_xray'), t('cat_lab')]);
+      }
 
-  const products = [
-    {
-      id: 1,
-      name: t('mri_name'),
-      category: t('cat_mri'),
-      image: "/images/mri.png",
-      price: t('custom_quote'),
-      description: t('mri_desc'),
-      features: [
-        locale === 'en' ? "SilentScan™ technology" : "تقنية SilentScan™ الصامتة",
-        locale === 'en' ? "48-channel RF system" : "نظام تردد لاسلكي 48 قناة",
-        locale === 'en' ? "Energy-saving standby mode" : "وضع استعداد موفر للطاقة"
-      ],
-      popular: true
-    },
-    {
-      id: 2,
-      name: t('ultrasound_name'),
-      category: t('cat_ultrasound'),
-      image: "/images/ultrasound.png",
-      price: t('custom_quote'),
-      description: t('ultrasound_desc'),
-      features: [
-        locale === 'en' ? "Advanced cardiac probes" : "مسابير قلبية متقدمة",
-        locale === 'en' ? "Live-stream consultation" : "استشارة عبر البث المباشر",
-        locale === 'en' ? "Built-in battery backup" : "بطارية احتياطية مدمجة"
-      ],
-      popular: true
-    },
-    {
-      id: 3,
-      name: t('monitor_name'),
-      category: t('cat_monitoring'),
-      image: "/images/monitor.png",
-      price: t('custom_quote'),
-      description: t('monitor_desc'),
-      features: [
-        locale === 'en' ? "Wireless sensor sync" : "مزامنة لاسلكية للمستشعرات",
-        locale === 'en' ? "Real-time AI alerts" : "تنبيهات ذكاء اصطناعي فورية",
-        locale === 'en' ? "Customizable dashboards" : "لوحات تحكم قابلة للتخصيص"
-      ]
-    },
-    {
-      id: 4,
-      name: t('infusion_name'),
-      category: t('cat_monitoring'),
-      image: "/images/monitor.png",
-      price: t('custom_quote'),
-      description: t('infusion_desc'),
-      features: [
-        locale === 'en' ? "Micro-dose accuracy" : "دقة الجرعات الدقيقة",
-        locale === 'en' ? "Anti-collision design" : "تصميم مضاد للتصادم",
-        locale === 'en' ? "Cloud data logging" : "تسجيل البيانات سحابياً"
-      ]
-    },
-    {
-      id: 5,
-      name: t('ct_name'),
-      category: t('cat_xray'),
-      image: "/images/mri.png",
-      price: t('custom_quote'),
-      description: t('ct_desc'),
-      features: [
-        locale === 'en' ? "Spectral imaging" : "تصوير طيفي",
-        locale === 'en' ? "Sub-second rotation" : "دوران في أقل من ثانية",
-        locale === 'en' ? "Pediatric dose presets" : "إعدادات مسبقة لجرعات الأطفال"
-      ]
-    },
-    {
-      id: 6,
-      name: t('lab_name'),
-      category: t('cat_lab'),
-      image: "/images/ultrasound.png",
-      price: t('custom_quote'),
-      description: t('lab_desc'),
-      features: [
-        locale === 'en' ? "1200 tests/hour" : "1200 اختبار/ساعة",
-        locale === 'en' ? "Auto-reagent cooling" : "تبريد تلقائي للكواشف",
-        locale === 'en' ? "Zero-carryover design" : "تصميم يمنع انتقال التلوث"
-      ]
+      const { data: dbProducts } = await supabase
+        .from('products')
+        .select('*, categories(*)')
+        .eq('is_active', true);
+        
+      if (dbProducts && dbProducts.length > 0) {
+        const mappedProducts = dbProducts.map(p => ({
+          id: p.id,
+          name: locale === 'ar' ? p.name_ar : p.name_en,
+          category: p.categories ? (locale === 'ar' ? p.categories.name_ar : p.categories.name_en) : t('all_products'),
+          image: p.image_url || '/images/mri.png',
+          price: p.price || t('custom_quote'),
+          description: locale === 'ar' ? p.description_ar : p.description_en,
+          features: locale === 'ar' ? (p.features_ar || []) : (p.features_en || []),
+          popular: p.is_popular
+        }));
+        setProducts(mappedProducts);
+      } else {
+        setProducts([]);
+      }
+      setIsLoading(false);
     }
-  ];
+    
+    fetchData();
+  }, [locale, t]);
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = activeCategory === t('all_products') || product.category === activeCategory;
@@ -107,12 +70,12 @@ export default function ProductsPage() {
   return (
     <div className={cn("flex flex-col w-full min-h-screen", locale === 'ar' ? "font-arabic" : "")} dir={dir}>
       {/* Header */}
-      <section className="pt-16 pb-10 md:pt-20 md:pb-12 glass border-b border-border/80 mb-8 md:mb-12">
+      <section className="pt-32 pb-10 md:pt-40 md:pb-24 glass border-b border-border/80 mb-8 md:mb-12">
         <div className="container mx-auto px-4 md:px-6 text-start">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-8">
             <div className="max-w-2xl">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-5 leading-tight font-outfit">
-                {locale === 'en' ? 'Product' : 'كتالوج'} <span className="text-gradientLeadingTightLeadingTightLeadingTightLeadingTightLeadingTightLeadingTight">{t('product_catalog')}</span>
+                {locale === 'en' ? 'Our' : 'تصفح'} <span className="text-gradient">{t('product_catalog')}</span>
               </h1>
               <p className="text-base md:text-lg text-muted-foreground leading-relaxed font-bold">
                 {t('catalog_desc')}
@@ -162,7 +125,17 @@ export default function ProductsPage() {
       <section className="container mx-auto px-4 md:px-6 pb-16 md:pb-32">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           <AnimatePresence mode='popLayout'>
-            {filteredProducts.map((product) => (
+            {isLoading ? (
+              <motion.div 
+                key="loading"
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                className="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-center py-32"
+              >
+                <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+              </motion.div>
+            ) : filteredProducts.map((product) => (
               <motion.div
                 layout
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -205,7 +178,7 @@ export default function ProductsPage() {
                   </p>
                   
                   <div className="space-y-3.5 md:space-y-4 mb-8 md:mb-10 py-6 border-y border-border/60">
-                    {product.features.map((feat, i) => (
+                    {product.features.map((feat: string, i: number) => (
                       <div key={i} className="flex items-center gap-3 text-[11px] md:text-sm font-bold text-foreground/80">
                         <CheckCircle2 size={14} className="text-primary flex-shrink-0" /> {feat}
                       </div>
@@ -230,7 +203,7 @@ export default function ProductsPage() {
           </AnimatePresence>
         </div>
         
-        {filteredProducts.length === 0 && (
+        {!isLoading && filteredProducts.length === 0 && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

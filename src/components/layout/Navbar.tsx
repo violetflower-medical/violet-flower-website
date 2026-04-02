@@ -8,12 +8,14 @@ import { Menu, X, ChevronRight, Languages } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
+import { supabase } from '@/lib/supabase';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const { locale, setLocale, t, dir } = useLanguage();
+  const [settings, setSettings] = useState<any>(null);
 
   const navLinks = [
     { name: t('home'), href: '/' },
@@ -32,9 +34,23 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    async function fetchSettings() {
+      const { data } = await supabase.from('site_settings').select('*').limit(1).single();
+      if (data) {
+        setSettings(data);
+      }
+    }
+    fetchSettings();
+  }, []);
+
   const toggleLanguage = () => {
     setLocale(locale === 'en' ? 'ar' : 'en');
   };
+
+  let companyName = settings ? (locale === 'ar' ? (settings.company_name_ar || 'زهرة البنفسج') : (settings.company_name_en || 'Violet Flower')) : (locale === 'ar' ? 'زهرة البنفسج' : 'Violet Flower');
+  if (locale === 'en' && !companyName.toLowerCase().includes('company')) companyName += ' Company';
+  if (locale === 'ar' && !companyName.includes('شركة')) companyName = 'شركة ' + companyName;
 
   return (
     <nav
@@ -60,11 +76,11 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col text-start py-1">
               <span className="font-bold text-xl md:text-2xl tracking-tight leading-none text-secondary group-hover:text-primary transition-colors font-outfit">
-                Violet Flower
+                {companyName}
               </span>
               <span className={cn(
-                "text-[9px] md:text-[10px] uppercase font-bold text-primary mt-1 md:mt-2 whitespace-nowrap opacity-90",
-                locale === 'en' ? "tracking-[0.25em]" : "tracking-normal"
+                "text-[8.5px] md:text-[10px] font-bold text-muted-foreground mt-1.5 max-w-[200px] md:max-w-[300px] leading-snug opacity-80",
+                locale === 'en' ? "tracking-wide" : "tracking-normal"
               )}>
                 {t('tagline')}
               </span>

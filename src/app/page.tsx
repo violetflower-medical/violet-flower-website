@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -16,9 +16,27 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/LanguageContext';
+import { supabase } from '@/lib/supabase';
 
 export default function HomePage() {
   const { t, dir, locale } = useLanguage();
+  const [clients, setClients] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      const { data, error } = await supabase
+        .from('clients')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+      
+      if (!error && data) {
+        setClients(data);
+      }
+    };
+    
+    fetchClients();
+  }, []);
 
   return (
     <div className={cn("flex flex-col w-full overflow-hidden", locale === 'ar' ? "font-arabic" : "")} dir={dir}>
@@ -156,73 +174,59 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             <FeatureCard 
-              icon={<ShieldCheck size={28} className="text-primary" />}
+              icon={<Activity size={28} className="text-primary" />}
               title={t('prec_title')}
               description={t('prec_desc')}
             />
             <FeatureCard 
-              icon={<Zap size={28} className="text-secondary" />}
+              icon={<ShieldCheck size={28} className="text-secondary" />}
               title={t('tech_title')}
               description={t('tech_desc')}
             />
             <FeatureCard 
-              icon={<Settings size={28} className="text-primary" />}
+              icon={<Zap size={28} className="text-primary" />}
               title={t('global_sup_title')}
               description={t('global_sup_desc')}
             />
             <FeatureCard 
-              icon={<Award size={28} className="text-secondary" />}
+              icon={<Settings size={28} className="text-secondary" />}
               title={t('trusted_part_title')}
               description={t('trusted_part_desc')}
+            />
+            <FeatureCard 
+              icon={<Award size={28} className="text-primary" />}
+              title={t('it_infra_title')}
+              description={t('it_infra_desc')}
             />
           </div>
         </div>
       </section>
 
-      {/* Featured Products Section */}
-      <section className="py-16 md:py-32">
-        <div className="container mx-auto px-4 md:px-8">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-10 mb-12 md:mb-20 text-start">
-            <div className="max-w-3xl">
-              <h2 className="text-primary font-bold uppercase tracking-[0.3em] text-[10px] md:text-xs mb-3 md:mb-5">{t('diag_solutions')}</h2>
-              <h3 className="text-2xl sm:text-4xl md:text-6xl font-bold tracking-tight mb-5 md:mb-6 leading-tight">{t('state_of_art')} <span className="text-gradientLeadingTightLeadingTight">{t('equipment')}</span></h3>
-              <p className="text-base md:text-xl leading-relaxed font-bold text-muted-foreground">
-                {t('equip_desc')}
-              </p>
-            </div>
-            <Link href="/products" className="group flex items-center gap-3 font-bold text-primary hover:text-secondary transition-all text-base md:text-lg underline underline-offset-[12px] decoration-2 decoration-primary/30 hover:decoration-secondary">
-              {t('view_all_prods')} 
-              <ArrowRight size={22} className={cn("transition-transform duration-300", dir === 'ltr' ? "group-hover:translate-x-2" : "group-hover:-translate-x-2 rotate-180")} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-            <ProductCard 
-              image="/images/mri.png"
-              category={locale === 'en' ? 'Imaging Systems' : 'أنظمة التصوير'}
-              title={t('mri_name')}
-              specs={locale === 'en' 
-                ? ["3.0T Field Strength", "AI Artifact Removal", "Low Energy Mode"] 
-                : ["قوة مغناطيسية 3.0T", "إزالة الشوائب بالذكاء الاصطناعي", "وضع توفير الطاقة"]}
-            />
-            <ProductCard 
-              image="/images/ultrasound.png"
-              category={locale === 'en' ? 'Diagnostics' : 'التشخيص'}
-              title={t('ultrasound_name')}
-              specs={locale === 'en' 
-                ? ["4D Real-time Imaging", "High-Def Probes", "Compact Design"]
-                : ["تصوير 4D في الوقت الفعلي", "مجسات عالية الدقة", "تصميم مدمج"]}
-            />
-            <ProductCard 
-              image="/images/monitor.png"
-              category={locale === 'en' ? 'Patient Monitoring' : 'مراقبة المرضى'}
-              title={t('monitor_name')}
-              specs={locale === 'en' 
-                ? ["Wireless Integration", "Real-time Analytics", "12-Lead ECG"]
-                : ["تكامل لاسلكي", "تحليلات الوقت الفعلي", "تخطيط القلب 12-Lead"]}
-            />
+      {/* Products CTA Section */}
+      <section className="py-16 md:py-32 px-4 md:px-8">
+        <div className="container mx-auto">
+          <div className="relative rounded-[32px] md:rounded-[48px] bg-gradient-to-r from-primary via-secondary to-primary p-[2px] shadow-2xl overflow-hidden group">
+             <div className="relative rounded-[30px] md:rounded-[46px] bg-background/95 backdrop-blur-3xl px-6 py-16 md:p-20 lg:p-28 w-full h-full flex flex-col items-center text-center overflow-hidden z-20">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+                
+                <h2 className="text-secondary font-bold uppercase tracking-[0.3em] text-[10px] md:text-sm mb-4 md:mb-6">{t('diag_solutions')}</h2>
+                <h3 className="text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-tight mb-6 md:mb-8 font-outfit max-w-4xl">{t('state_of_art')} <span className="text-gradient block mt-2">{t('equipment')}</span></h3>
+                <p className="text-base sm:text-lg md:text-2xl text-muted-foreground font-bold max-w-3xl mb-10 md:mb-14 leading-relaxed">
+                  {t('equip_desc')}
+                </p>
+                
+                <Link
+                  href="/products"
+                  className="px-8 md:px-12 py-5 md:py-6 rounded-full medical-gradient text-white font-bold text-base md:text-xl shadow-2xl shadow-primary/30 hover:shadow-primary/50 transition-all hover:-translate-y-2 active:scale-95 inline-flex items-center gap-4"
+                >
+                  {t('view_all_prods')}
+                  <ArrowRight size={24} className={cn("transition-transform duration-300", dir === 'ltr' ? "group-hover:translate-x-3" : "group-hover:-translate-x-3 rotate-180")} />
+                </Link>
+             </div>
+             {/* Animated gradient border effect via CSS mapping */}
           </div>
         </div>
       </section>
@@ -279,16 +283,20 @@ export default function HomePage() {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4 md:gap-y-6">
                 {[
-                  { label: t('iso_cert'), icon: <CheckCircle2 size={18} className="text-primary shrink-0" /> },
-                  { label: t('factory_training'), icon: <CheckCircle2 size={18} className="text-primary shrink-0" /> },
-                  { label: t('spare_parts'), icon: <CheckCircle2 size={18} className="text-primary shrink-0" /> },
-                  { label: t('leasing_options'), icon: <CheckCircle2 size={18} className="text-primary shrink-0" /> }
+                  { label: t('iso_cert'), desc: t('iso_cert_desc'), icon: <CheckCircle2 size={18} className="text-primary shrink-0" /> },
+                  { label: t('factory_training'), desc: t('factory_training_desc'), icon: <CheckCircle2 size={18} className="text-primary shrink-0" /> },
+                  { label: t('spare_parts'), desc: t('spare_parts_desc'), icon: <CheckCircle2 size={18} className="text-primary shrink-0" /> },
+                  { label: t('leasing_options'), desc: t('leasing_options_desc'), icon: <CheckCircle2 size={18} className="text-primary shrink-0" /> },
+                  { label: t('long_term_partnerships'), desc: t('long_term_partnerships_desc'), icon: <CheckCircle2 size={18} className="text-primary shrink-0" /> }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-4 group">
-                    <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center border border-border group-hover:bg-primary/10 group-hover:border-primary/30 transition-all">
+                  <div key={i} className="flex gap-4 group">
+                    <div className="w-8 h-8 md:w-10 md:h-10 shrink-0 rounded-full bg-white shadow-[0_4px_10px_rgba(0,0,0,0.03)] flex items-center justify-center border border-border group-hover:bg-primary/10 group-hover:border-primary/30 transition-all mt-1">
                       {item.icon}
                     </div>
-                    <span className="font-bold text-foreground/80 tracking-wide text-sm md:text-base">{item.label}</span>
+                    <div className="flex flex-col">
+                      <span className="font-bold text-foreground/90 tracking-wide text-sm md:text-base mb-1">{item.label}</span>
+                      <span className="text-xs md:text-sm text-muted-foreground leading-relaxed font-medium">{item.desc}</span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -365,6 +373,45 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Clients Section */}
+      {clients.length > 0 && (
+        <section className="py-16 md:py-24 bg-accent/5">
+          <div className="container mx-auto px-4 md:px-8">
+            <div className="text-center mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 font-outfit leading-tight">{t('our_clients')}</h2>
+              <p className="text-muted-foreground font-bold max-w-2xl mx-auto">{t('clients_desc')}</p>
+            </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-8">
+              {clients.map((client, i) => (
+                <motion.div
+                  key={client.id || i}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  className="bg-white/40 backdrop-blur-sm p-6 rounded-3xl border border-border/40 flex flex-col items-center justify-center text-center group hover:bg-white hover:shadow-xl transition-all duration-300 min-h-[120px]"
+                >
+                  {client.logo_url ? (
+                    <div className="relative w-full h-16 mb-3 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all duration-500">
+                      <Image 
+                        src={client.logo_url} 
+                        alt={locale === 'ar' ? client.name_ar : client.name_en}
+                        fill
+                        className="object-contain p-1"
+                      />
+                    </div>
+                  ) : null}
+                  <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-muted-foreground group-hover:text-primary transition-colors line-clamp-2">
+                    {locale === 'ar' ? client.name_ar : client.name_en}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Final CTA section */}
       <section className="py-16 md:py-32 mb-10">

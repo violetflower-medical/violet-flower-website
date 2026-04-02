@@ -16,22 +16,95 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/LanguageContext';
+import { supabase } from '@/lib/supabase';
+import { useEffect } from 'react';
 
 export default function ContactPage() {
   const { t, dir, locale } = useLanguage();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [settings, setSettings] = useState<any>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    async function fetchSettings() {
+      const { data } = await supabase.from('site_settings').select('*').limit(1).single();
+      if (data) {
+        setSettings(data);
+      }
+    }
+    fetchSettings();
+  }, []);
+
+  const address = settings ? (locale === 'ar' ? (settings.address_ar || t('address')) : (settings.address_en || t('address'))) : (locale === 'en' ? "123 Medical Plaza, Dubai Health Care City, UAE" : "123 ميديكال بلازا، مدينة دبي للرعاية الصحية، الإمارات");
+  const phoneMain = settings?.phone_main || "+1 (800) VIOLET-MED / +971 4 000 000";
+  const emailInfo = settings?.email_sales ? `${settings.email_sales} / ${settings.email_info}` : "sales@violetflower.med / info@violetflower.med";
+  const workingHours = settings ? (locale === 'ar' ? (settings.working_hours_ar || t('mon_fri')) : (settings.working_hours_en || t('mon_fri'))) : t('mon_fri');
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    // Mimic API delay
-    setTimeout(() => setIsSubmitted(false), 5000);
+    if (isSubmitting) return;
+
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
+    const fullName = formData.get('full_name') as string;
+    const medicalFacility = formData.get('medical_facility') as string;
+    const email = formData.get('email') as string;
+    const equipmentInterest = formData.get('equipment_interest') as string;
+    const message = formData.get('message') as string;
+
+    // Strict Client-Side Validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!fullName.trim() || fullName.trim().length < 2) {
+        alert(locale === 'ar' ? 'يرجى إدخال اسمك الكامل بشكل صحيح لتتمكن من الإرسال.' : 'Please enter a valid full name.');
+        return;
+    }
+    if (!medicalFacility.trim() || medicalFacility.trim().length < 2) {
+        alert(locale === 'ar' ? 'يرجى تزويدنا باسم المستشفى القطعي أو المنشأة الطبية التابع لها.' : 'Please enter a valid medical facility name.');
+        return;
+    }
+    if (!email.trim() || !emailRegex.test(email.trim())) {
+        alert(locale === 'ar' ? 'عذراً، البريد الإلكتروني الذي أدخلته غير صالح.' : 'Please enter a structurally valid email address.');
+        return;
+    }
+    if (!message.trim() || message.trim().length < 10) {
+        alert(locale === 'ar' ? 'يرجى توضيح استفسارك أو طلبك بشكل أطول قليلاً (أكثر من 10 أحرف).' : 'Please enter a clinical inquiry of at least 10 characters length.');
+        return;
+    }
+
+    setIsSubmitting(true);
+
+    const data = {
+      full_name: fullName.trim(),
+      medical_facility: medicalFacility.trim(),
+      email: email.trim().toLowerCase(),
+      equipment_interest: equipmentInterest || 'General Inquiry',
+      message: message.trim(),
+    };
+
+    try {
+      // Dynamic import to avoid client-side error if env vars aren't setup yet at build time (optional but safer)
+      const { supabase } = await import('@/lib/supabase');
+      
+      const { error } = await supabase.from('contact_inquiries').insert([data]);
+      if (error) throw error;
+      
+      setIsSubmitted(true);
+      formElement.reset(); // Clear the form
+      
+      setTimeout(() => setIsSubmitted(false), 5000);
+    } catch (error) {
+      console.error('Submission error:', error);
+      alert(locale === 'ar' ? 'حدث خطأ في النظام الداخلي لقاعدة البيانات، تأكد من سلامة الاتصال.' : 'Database submission error. Server connection disrupted.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className={cn("flex flex-col w-full min-h-screen", locale === 'ar' ? "font-arabic" : "")} dir={dir}>
       {/* Hero / Header */}
-      <section className="pt-20 pb-12 md:pt-24 md:pb-16 bg-accent/30 relative overflow-hidden border-b border-border/80">
+      <section className="pt-32 pb-12 md:pt-40 md:pb-24 bg-accent/30 relative overflow-hidden border-b border-border/80">
         <div className={cn(
           "absolute top-0 w-1/4 h-full bg-primary/5 blur-[80px] rounded-full translate-x-1/2",
           dir === 'ltr' ? "right-0" : "left-0"
@@ -42,7 +115,7 @@ export default function ContactPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-4 md:mb-6 font-outfit leading-tight"
             >
-                {locale === 'en' ? 'Get in' : ''} <span className="text-gradientLeadingTightLeadingTightLeadingTightLeadingTightLeadingTightLeadingTight">{t('get_in_touch')}</span>
+                <span className="text-gradient">{t('get_in_touch')}</span>
             </motion.h1>
             <motion.p 
                 initial={{ opacity: 0, y: 20 }}
@@ -70,39 +143,25 @@ export default function ContactPage() {
                 <ContactInfoCard 
                     icon={<MapPin className="text-primary" size={24} />}
                     title={t('headquarters')}
-                    text={locale === 'en' ? "123 Medical Plaza, Dubai Health Care City, UAE" : "123 ميديكال بلازا، مدينة دبي للرعاية الصحية، الإمارات"}
+                    text={address}
                 />
                 <ContactInfoCard 
                     icon={<Phone className="text-secondary" size={24} />}
                     title={t('global_support')}
-                    text="+1 (800) VIOLET-MED / +971 4 000 000"
+                    text={phoneMain}
                 />
                 <ContactInfoCard 
                     icon={<Mail className="text-primary" size={24} />}
                     title={t('inquiries')}
-                    text="sales@violetflower.med / info@violetflower.med"
+                    text={emailInfo}
                 />
                 <ContactInfoCard 
                     icon={<Clock className="text-secondary" size={24} />}
                     title={t('operating_hours')}
-                    text={t('mon_fri')}
+                    text={workingHours}
                 />
               </div>
 
-              <div className={cn(
-                "p-6 md:p-10 glass rounded-[28px] md:rounded-[40px] border border-border mt-4 relative overflow-hidden group shadow-sm transition-all hover:bg-white/40",
-                dir === 'ltr' ? "border-l-4 border-l-primary" : "border-r-4 border-r-primary"
-              )}>
-                <h3 className="font-bold text-lg md:text-2xl mb-4 md:mb-6 flex items-center gap-3 font-outfit">
-                    <ShieldCheck size={24} className="text-primary" /> {t('tech_urgency')}
-                </h3>
-                <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-8 md:mb-10 font-bold">
-                    {t('tech_urgency_desc')}
-                </p>
-                <button className="w-full py-4.5 md:py-5 rounded-2xl border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all text-base md:text-lg active:scale-95">
-                    {t('access_priority')}
-                </button>
-              </div>
             </div>
 
             {/* Contact Form Column */}
@@ -122,6 +181,7 @@ export default function ContactPage() {
                     <label className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] px-1 font-outfit">{t('full_name')}</label>
                     <input 
                       required
+                      name="full_name"
                       type="text" 
                       placeholder={locale === 'en' ? "Dr. John Smith" : "د. أحمد كمال"} 
                       className="w-full px-5 py-4.5 md:px-6 md:py-5 rounded-xl border border-border/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 bg-accent/20 transition-all outline-none text-sm md:text-base font-bold" 
@@ -131,6 +191,7 @@ export default function ContactPage() {
                     <label className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] px-1 font-outfit">{t('medical_facility')}</label>
                     <input 
                       required
+                      name="medical_facility"
                       type="text" 
                       placeholder={locale === 'en' ? "City General Hospital" : "مستشفى المدينة العام"} 
                       className="w-full px-5 py-4.5 md:px-6 md:py-5 rounded-xl border border-border/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 bg-accent/20 transition-all outline-none text-sm md:text-base font-bold" 
@@ -143,6 +204,7 @@ export default function ContactPage() {
                     <label className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] px-1 font-outfit">{t('email_addr')}</label>
                     <input 
                       required
+                      name="email"
                       type="email" 
                       placeholder="email@facility.com" 
                       className="w-full px-5 py-4.5 md:px-6 md:py-5 rounded-xl border border-border/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 bg-accent/20 transition-all outline-none text-sm md:text-base font-bold" 
@@ -151,12 +213,12 @@ export default function ContactPage() {
                   <div className="space-y-3">
                     <label className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] px-1 font-outfit">{t('equip_interest')}</label>
                     <div className="relative">
-                      <select className="w-full px-5 py-4.5 md:px-6 md:py-5 rounded-xl border border-border/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 bg-accent/20 transition-all outline-none appearance-none text-sm md:text-base font-bold">
-                        <option>{t('select_cat')}</option>
-                        <option>{t('cat_mri')}</option>
-                        <option>{t('cat_ultrasound')}</option>
-                        <option>{t('cat_monitoring')}</option>
-                        <option>{t('tech_support_training')}</option>
+                      <select name="equipment_interest" className="w-full px-5 py-4.5 md:px-6 md:py-5 rounded-xl border border-border/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 bg-accent/20 transition-all outline-none appearance-none text-sm md:text-base font-bold">
+                        <option value="">{t('select_cat')}</option>
+                        <option value={t('cat_mri')}>{t('cat_mri')}</option>
+                        <option value={t('cat_ultrasound')}>{t('cat_ultrasound')}</option>
+                        <option value={t('cat_monitoring')}>{t('cat_monitoring')}</option>
+                        <option value={t('tech_support_training')}>{t('tech_support_training')}</option>
                       </select>
                       <Info size={16} className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground/40 pointer-events-none", dir === 'ltr' ? "right-5" : "left-5")} />
                     </div>
@@ -167,6 +229,7 @@ export default function ContactPage() {
                   <label className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] px-1 font-outfit">{t('clinical_inquiry')}</label>
                   <textarea 
                     required
+                    name="message"
                     placeholder={locale === 'en' ? "Describe your requirements..." : "صف متطلباتك أو استفساراتك الفنية..."} 
                     rows={4}
                     className="w-full px-5 py-4.5 md:px-6 md:py-5 rounded-xl border border-border/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 bg-accent/20 transition-all outline-none resize-none text-sm md:text-base font-bold"
@@ -180,16 +243,18 @@ export default function ContactPage() {
 
                 <button 
                   type="submit"
-                  disabled={isSubmitted}
+                  disabled={isSubmitting || isSubmitted}
                   className={cn(
                     "w-full py-5 md:py-6 rounded-2xl font-bold text-base md:text-xl shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-4 active:scale-[0.98] active:translate-y-0",
                     isSubmitted 
                         ? "bg-green-500 text-white" 
-                        : "medical-gradient text-white shadow-primary/30"
+                        : (isSubmitting ? "bg-primary/70 text-white cursor-wait" : "medical-gradient text-white shadow-primary/30")
                   )}
                 >
                   {isSubmitted ? (
                     <> <CheckCircle2 size={24} /> {t('msg_sent_success')} </>
+                  ) : isSubmitting ? (
+                    <> <div className="w-6 h-6 rounded-full border-2 border-white/30 border-t-white animate-spin" /> {locale === 'en' ? 'Sending...' : 'جاري الإرسال...'} </>
                   ) : (
                     <> <Send size={22} className={cn("transition-transform duration-300", dir === 'rtl' ? "rotate-180" : "")} /> {t('req_consultation')} </>
                   )}
