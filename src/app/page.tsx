@@ -45,7 +45,7 @@ export default function HomePage() {
   return (
     <div className={cn("flex flex-col w-full overflow-hidden", locale === 'ar' ? "font-arabic" : "")} dir={dir}>
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] md:min-h-screen flex items-center pt-20 pb-16 md:pt-24 md:pb-20">
+      <section className="relative min-h-[90vh] md:min-h-screen flex items-center pt-40 md:pt-24 pb-16 md:pb-20 overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <div className={cn(
             "absolute inset-0 z-10",
@@ -459,11 +459,11 @@ export default function HomePage() {
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
   return (
-    <div className="bg-white p-10 rounded-[35px] border border-border/80 hover:border-primary/40 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 group text-start flex flex-col h-full shadow-[0_10px_30px_-15px_rgba(0,0,0,0.03)] focus-within:border-primary/40">
-      <div className="w-16 h-16 rounded-2xl glass border border-border flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-primary/5 transition-all shadow-sm">
+    <div className="bg-white p-6 md:p-10 rounded-3xl md:rounded-[35px] border border-border/80 hover:border-primary/40 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 group text-start flex flex-col h-full shadow-[0_10px_30px_-15px_rgba(0,0,0,0.03)] focus-within:border-primary/40">
+      <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl md:rounded-2xl glass border border-border flex items-center justify-center mb-6 md:mb-8 group-hover:scale-110 group-hover:bg-primary/5 transition-all shadow-sm">
         {icon}
       </div>
-      <h4 className="font-bold text-2xl mb-4 text-secondary font-outfit">{title}</h4>
+      <h4 className="font-bold text-xl md:text-2xl mb-3 md:mb-4 text-secondary font-outfit">{title}</h4>
       <p className="text-muted-foreground leading-relaxed text-sm md:text-base font-medium flex-grow">
         {description}
       </p>
@@ -494,9 +494,9 @@ function ProductCard({ image, category, title, specs }: { image: string, categor
           </motion.div>
         </div>
       </div>
-      <div className="p-10 text-start flex flex-col h-full">
-        <h4 className="text-2xl font-bold mb-6 group-hover:text-primary transition-colors leading-tight font-outfit">{title}</h4>
-        <ul className="flex flex-col gap-4 mb-10 flex-grow">
+      <div className="p-6 md:p-10 text-start flex flex-col h-full">
+        <h4 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 group-hover:text-primary transition-colors leading-tight font-outfit">{title}</h4>
+        <ul className="flex flex-col gap-3 md:gap-4 mb-8 md:mb-10 flex-grow">
           {specs.map((spec, i) => (
             <li key={i} className="flex items-start gap-3 text-sm md:text-base text-muted-foreground/90 font-medium">
               <CheckCircle2 size={16} className="text-primary mt-0.5 shrink-0" />

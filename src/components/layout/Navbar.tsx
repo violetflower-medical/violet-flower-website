@@ -65,7 +65,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4 md:px-8">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3 md:gap-5 group flex-shrink-0">
-            <div className="relative w-14 h-14 md:w-20 md:h-20 flex-shrink-0 transition-all duration-500 group-hover:scale-105 group-hover:rotate-3">
+            <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 flex-shrink-0 transition-all duration-500 group-hover:scale-105 group-hover:rotate-3">
               <Image 
                 src="/logo.png" 
                 alt="Violet Flower Logo" 
@@ -74,12 +74,12 @@ export default function Navbar() {
                 priority
               />
             </div>
-            <div className="flex flex-col text-start py-1">
-              <span className="font-bold text-xl md:text-2xl tracking-tight leading-none text-secondary group-hover:text-primary transition-colors font-outfit">
+            <div className="flex flex-col text-start py-1 min-w-0">
+              <span className="font-bold text-base sm:text-lg md:text-2xl tracking-tight leading-none text-secondary group-hover:text-primary transition-colors font-outfit truncate sm:whitespace-normal">
                 {companyName}
               </span>
               <span className={cn(
-                "text-[8.5px] md:text-[10px] font-bold text-muted-foreground mt-1.5 max-w-[200px] md:max-w-[300px] leading-snug opacity-80",
+                "text-[7px] sm:text-[9.5px] md:text-[10px] font-bold text-muted-foreground mt-1 max-w-[140px] sm:max-w-[200px] md:max-w-[300px] leading-snug opacity-80 line-clamp-2",
                 locale === 'en' ? "tracking-wide" : "tracking-normal"
               )}>
                 {t('tagline')}
@@ -149,16 +149,38 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button Container */}
           <div className="flex items-center gap-3 lg:hidden">
-
-            <button
-              className="p-2 text-foreground hover:bg-accent rounded-full transition-colors"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label="Toggle menu"
+            {/* Mobile Language Toggle */}
+            <div 
+              className="relative h-8 w-16 glass border border-border rounded-full p-0.5 flex items-center cursor-pointer shadow-sm select-none"
+              onClick={toggleLanguage}
             >
-              {isOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+              <motion.div 
+                className="absolute h-7 w-[30px] bg-primary rounded-full shadow-sm z-0"
+                animate={{ x: locale === 'en' ? 29 : 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              />
+              <div className={cn(
+                "relative z-10 flex-1 text-center text-[8px] font-black tracking-tighter uppercase transition-colors duration-300",
+                locale === 'ar' ? "text-white" : "text-muted-foreground"
+              )}>AR</div>
+              <div className={cn(
+                "relative z-10 flex-1 text-center text-[8px] font-black tracking-tighter uppercase transition-colors duration-300",
+                locale === 'en' ? "text-white" : "text-muted-foreground"
+              )}>EN</div>
+            </div>
+
+            {/* Menu Toggle Button */}
+            {!isOpen && (
+              <button
+                className="p-2 text-foreground hover:bg-accent rounded-full transition-colors"
+                onClick={() => setIsOpen(true)}
+                aria-label="Open menu"
+              >
+                <Menu size={22} />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -180,8 +202,8 @@ export default function Navbar() {
               exit={{ x: dir === 'ltr' ? '-100%' : '100%', opacity: 0 }}
               transition={{ type: "spring", damping: 35, stiffness: 400 }}
               className={cn(
-                "fixed top-0 bottom-0 w-[70%] max-w-[300px] bg-white/95 backdrop-blur-xl border-r border-primary/10 z-[55] lg:hidden shadow-2xl flex flex-col p-6 overflow-y-auto no-scrollbar transition-all duration-300",
-                dir === 'ltr' ? "left-0" : "right-0 border-r-0 border-l border-primary/10"
+                "fixed top-0 bottom-0 w-[78%] max-w-[320px] bg-white z-[55] lg:hidden shadow-[20px_0_60px_-15px_rgba(0,0,0,0.15)] flex flex-col p-8 overflow-y-auto no-scrollbar",
+                dir === 'ltr' ? "left-0" : "right-0"
               )}
             >
               <div className="flex items-center justify-between mb-12">
@@ -204,21 +226,21 @@ export default function Navbar() {
                       key={link.href}
                       href={link.href}
                       className={cn(
-                        'py-5 text-lg font-bold flex items-center justify-between group border-b border-border/40 last:border-0 transition-all active:scale-[0.98]',
-                        isActive ? 'text-primary' : 'text-secondary/80',
-                        locale === 'ar' ? 'font-arabic text-xl' : 'font-outfit'
+                        'py-6 text-2xl font-bold flex items-center justify-between group border-b border-border/40 last:border-0 transition-all active:scale-[0.98]',
+                        isActive ? 'text-primary' : 'text-foreground/90',
+                        locale === 'ar' ? 'font-arabic text-3xl' : 'font-outfit'
                       )}
                       onClick={() => setIsOpen(false)}
                     >
                       <div className="flex items-center gap-4">
-                        {isActive && <motion.div layoutId="mobileActiveDot" className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                        {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
                         <span>{link.name}</span>
                       </div>
                       <ChevronRight 
-                        size={18} 
+                        size={24} 
                         className={cn(
-                          "text-muted-foreground/40 group-hover:text-primary transition-all duration-300", 
-                          dir === 'rtl' ? "rotate-180 group-hover:-translate-x-1" : "group-hover:translate-x-1",
+                          "text-primary/40 group-hover:text-primary transition-all duration-300", 
+                          dir === 'rtl' ? "rotate-180 group-hover:-translate-x-2" : "group-hover:translate-x-2",
                           isActive && "text-primary opacity-100"
                         )} 
                       />
