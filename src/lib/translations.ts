@@ -55,7 +55,7 @@ export const translations: Dictionary = {
   'hero_title_2': { en: 'Since 2008', ar: 'منذ عام 2008' },
   'hero_desc': { 
     en: 'Violet Flower Company, based in Riyadh, is a leading provider of complete healthcare facility solutions. Since 2008, we have supported hospitals and clinics across Saudi Arabia with a fully integrated portfolio that covers every stage of healthcare operations — from planning and equipping to maintaining and sustaining safe, efficient environments.', 
-    ar: 'تأسست شركة Violet Flower في الرياض، وهي مزود رائد لحلول مرافق الرعاية الصحية المتكاملة. منذ عام 2008، قمنا بدعم المستشفيات والعيادات في جميع أنحاء المملكة العربية السعودية بمحفظة متكاملة تغطي كل مرحلة من مراحل تشغيل الرعاية الصحية، بدءاً من التخطيط والتجهيز وحتى الصيانة والحفاظ على بيئات آمنة وفعالة.' 
+    ar: 'شركة زهرة البنفسج، ومقرها الرياض، هي مزود رائد لحلول مرافق الرعاية الصحية المتكاملة. منذ عام 2008، قمنا بدعم المستشفيات والعيادات في جميع أنحاء المملكة العربية السعودية بمحفظة متكاملة تغطي كل مرحلة من مراحل تشغيل الرعاية الصحية، بدءاً من التخطيط والتجهيز وحتى الصيانة والحفاظ على بيئات آمنة وفعالة.' 
   },
   'clinics_served': { en: 'Clinics Served', ar: 'عيادة خدمت' },
   'years_exp': { en: 'Years Experience', ar: 'سنوات خبرة' },
@@ -83,7 +83,7 @@ export const translations: Dictionary = {
   'equip_desc': { en: 'Empower your facility with our flagship diagnostic machines, engineered for high-throughput and extreme precision.', ar: 'قم بتمكين منشأتك من خلال أجهزتنا التشخيصية الرائدة، المصممة للإنتاجية العالية والدقة الفائقة.' },
   'view_all_prods': { en: 'View All Products', ar: 'عرض جميع المنتجات' },
   'committed_excellence': { en: 'Why Choose Us', ar: 'لماذا تختارنا؟' },
-  'corporate_desc': { en: 'Our mission is to simplify healthcare operations by providing one trusted partner for all critical facility needs. With a commitment to quality, compliance, and innovation, Violet Flower Company ensures that healthcare institutions operate with reliability, safety, and excellence.', ar: 'تتمثل مهمتنا في تبسيط عمليات الرعاية الصحية من خلال توفير شريك موثوق واحد لجميع احتياجات المرافق الحيوية. مع الالتزام المطلق بالجودة والامتثال والابتكار، نضمن استمرار عمل مؤسسات الرعاية الصحية بموثوقية وأمان وتميز.' },
+  'corporate_desc': { en: 'Our mission is to simplify healthcare operations by providing one trusted partner for all critical facility needs. With a commitment to quality, compliance, and innovation, Violet Flower Company ensures that healthcare institutions operate with reliability, safety, and excellence.', ar: 'تتمثل مهمتنا في تبسيط عمليات الرعاية الصحية من خلال توفير شريك موثوق واحد لجميع احتياجات المرافق الحيوية. مع الالتزام المطلق بالجودة والامتثال والابتكار، نضمن بشركة زهرة البنفسج استمرار عمل مؤسسات الرعاية الصحية بموثوقية وأمان وتميز.' },
   'iso_cert': { en: 'End-to-End Solutions', ar: 'حلول شاملة ومتكاملة' },
   'iso_cert_desc': { en: 'One partner for all healthcare facility needs.', ar: 'شريك استراتيجي واحد لجميع احتياجات مرافق الرعاية الصحية.' },
   'factory_training': { en: 'Experience & Trust', ar: 'خبرة وثقة مستدامة' },
@@ -253,9 +253,11 @@ export const translations: Dictionary = {
   'msg_sent_success': { en: 'Message Sent Successfully', ar: 'تم إرسال الرسالة بنجاح' },
   'req_consultation': { en: 'Request Specialized Consultation', ar: 'اطلب استشارة متخصصة' },
   'visit_centers': { en: 'Visit Our Clinical Experience Centers', ar: 'تفضل بزيارة مراكز الخبرة السريرية لدينا' },
-  'nearest_hub_desc': { en: 'Find your nearest Violet Flower regional hub for hands-on equipment demonstrations.', ar: 'ابحث عن أقرب مركز إقليمي لـ Violet Flower للحصول على عروض عملية للمعدات.' },
+  'nearest_hub_desc': { en: 'Find your nearest Violet Flower regional hub for hands-on equipment demonstrations.', ar: 'ابحث عن أقرب مركز إقليمي لشركة زهرة البنفسج للحصول على عروض عملية للمعدات.' },
   'map_loading': { en: 'Interactive Map Engine Loading...', ar: 'جاري تحميل محرك الخريطة التفاعلية...' },
   'locations_count': { en: 'Connecting you to 40+ global service locations.', ar: 'نربطك بأكثر من 40 موقع خدمة عالمياً.' },
+  'footer_copyright': { en: '© {year} {company}. All rights reserved.', ar: '© {year} {company}. جميع الحقوق محفوظة.' },
+  'sys_status': { en: 'Systems Operational', ar: 'الأنظمة تعمل بكفاءة' },
 
   // Partners Page
   'intl_partners': { en: 'International Partners', ar: 'الشركاء الدوليون' },
@@ -274,7 +276,7 @@ export const translations: Dictionary = {
   'ethical_supply_chain': { en: 'Ethical Supply Chain', ar: 'سلسلة توريد أخلاقية' },
   'ethical_supply_chain_desc': { en: 'Vetting of all manufacturing facilities for ethical labor practices and environmental sustainability metrics.', ar: 'تدقيق جميع مرافق التصنيع من حيث ممارسات العمل الأخلاقية ومقاييس الاستدامة البيئية.' },
   'expanding_frontiers': { en: 'Expanding Local Healthcare Frontiers', ar: 'توسيع آفاق الرعاية الصحية المحلية' },
-  'expanding_frontiers_desc': { en: 'Violet Flower acts as the official agency bridge for manufacturers to enter and support high-growth clinical markets across 40+ countries.', ar: 'تعمل Violet Flower كجسر وكالة رسمي للمصنعين للدخول ودعم الأسواق السريرية عالية النمو عبر أكثر من 40 دولة.' },
+  'expanding_frontiers_desc': { en: 'Violet Flower acts as the official agency bridge for manufacturers to enter and support high-growth clinical markets across 40+ countries.', ar: 'تعمل شركة زهرة البنفسج كجسر وكالة رسمي للمصنعين للدخول ودعم الأسواق السريرية عالية النمو عبر أكثر من 40 دولة.' },
   'inquire_agency': { en: 'Inquire Agency Agreement', ar: 'استفسر عن اتفاقية الوكالة' },
   'supported_regions': { en: 'Supported Regions: GCC, EU, MENA', ar: 'المناق المدعومة: دول مجلس التعاون الخليجي، الاتحاد الأوروبي، الشرق الأوسط وشمال أفريقيا' },
   'est_since': { en: 'Est. Since', ar: 'تأسست منذ' },

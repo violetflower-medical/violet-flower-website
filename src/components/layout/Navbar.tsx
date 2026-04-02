@@ -90,40 +90,59 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-10">
             <div className="flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    'text-[13px] uppercase tracking-widest font-bold transition-all hover:text-primary relative py-2 font-outfit px-1',
-                    pathname === link.href ? 'text-primary' : 'text-foreground/70'
-                  )}
-                >
-                  {link.name}
-                  {pathname === link.href && (
-                    <motion.div
-                      layoutId="activeNav"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      'text-[13px] uppercase tracking-[0.2em] font-bold transition-all hover:text-primary relative py-2 font-outfit px-2 group flex flex-col items-center',
+                      isActive ? 'text-primary' : 'text-foreground/70'
+                    )}
+                  >
+                    <span className="relative z-10">{link.name}</span>
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeNavDot"
+                        className="absolute -bottom-1 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_10px_rgba(142,93,168,0.5)]"
+                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      />
+                    )}
+                    <div className="absolute -bottom-1 w-0 h-0.5 bg-primary/20 rounded-full transition-all duration-300 group-hover:w-full" />
+                  </Link>
+                );
+              })}
             </div>
 
-            <div className="flex items-center gap-5">
-              <button
+            <div className="flex items-center gap-6">
+              {/* Professional Language Switcher Slider */}
+              <div 
+                className="relative h-10 w-32 glass border border-border/80 rounded-full p-1 flex items-center cursor-pointer shadow-sm hover:border-primary/30 transition-all select-none"
                 onClick={toggleLanguage}
-                className="flex items-center gap-2 px-4 py-2 rounded-full glass border border-border/80 hover:border-primary/40 hover:bg-white/80 transition-all text-xs font-bold text-foreground/80 group shadow-sm"
-                aria-label="Toggle Language"
               >
-                <Languages size={14} className="text-primary group-hover:scale-110 transition-transform" />
-                <span className="min-w-[50px]">{locale === 'en' ? 'العربية' : 'English'}</span>
-              </button>
+                <motion.div 
+                  className="absolute h-8 w-[58px] bg-primary rounded-full shadow-md z-0"
+                  animate={{ x: locale === 'en' ? 62 : 2 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+                <div className={cn(
+                  "relative z-10 flex-1 text-center text-[10px] font-bold uppercase transition-colors duration-300",
+                  locale === 'ar' ? "text-white" : "text-muted-foreground"
+                )}>
+                  AR
+                </div>
+                <div className={cn(
+                  "relative z-10 flex-1 text-center text-[10px] font-bold uppercase transition-colors duration-300",
+                  locale === 'en' ? "text-white" : "text-muted-foreground"
+                )}>
+                  EN
+                </div>
+              </div>
 
               <Link
                 href="/contact"
-                className="px-7 py-3 rounded-full medical-gradient text-white text-[13px] uppercase tracking-wider font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all hover:-translate-y-1 active:translate-y-0"
+                className="px-8 py-3.5 rounded-full medical-gradient text-white text-[13px] uppercase tracking-wider font-bold shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all hover:-translate-y-1.5 active:translate-y-0"
               >
                 {t('get_quote')}
               </Link>
@@ -132,13 +151,24 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-3 lg:hidden">
-            <button
+            <div 
+              className="relative h-8 w-16 glass border border-border rounded-full p-0.5 flex items-center cursor-pointer shadow-sm select-none"
               onClick={toggleLanguage}
-              className="px-3 py-1.5 rounded-full glass border border-border text-foreground/80 font-bold text-[10px] uppercase"
-              aria-label="Toggle Language"
             >
-              {locale === 'en' ? 'AR' : 'EN'}
-            </button>
+              <motion.div 
+                className="absolute h-7 w-[30px] bg-primary rounded-full shadow-sm z-0"
+                animate={{ x: locale === 'en' ? 29 : 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              />
+              <div className={cn(
+                "relative z-10 flex-1 text-center text-[8px] font-black tracking-tighter uppercase transition-colors duration-300",
+                locale === 'ar' ? "text-white" : "text-muted-foreground"
+              )}>AR</div>
+              <div className={cn(
+                "relative z-10 flex-1 text-center text-[8px] font-black tracking-tighter uppercase transition-colors duration-300",
+                locale === 'en' ? "text-white" : "text-muted-foreground"
+              )}>EN</div>
+            </div>
             <button
               className="p-2 text-foreground hover:bg-accent rounded-full transition-colors"
               onClick={() => setIsOpen(!isOpen)}
@@ -162,12 +192,12 @@ export default function Navbar() {
               className="fixed inset-0 bg-secondary/40 backdrop-blur-md z-[51] lg:hidden"
             />
             <motion.div
-              initial={{ x: dir === 'ltr' ? '-100%' : '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: dir === 'ltr' ? '-100%' : '100%' }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              initial={{ x: dir === 'ltr' ? '-100%' : '100%', opacity: 0.5 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: dir === 'ltr' ? '-100%' : '100%', opacity: 0 }}
+              transition={{ type: "spring", damping: 35, stiffness: 400 }}
               className={cn(
-                "fixed top-0 bottom-0 w-[85%] max-w-sm bg-background z-[52] lg:hidden shadow-[20px_0_60px_-15px_rgba(0,0,0,0.15)] flex flex-col p-8 overflow-y-auto no-scrollbar",
+                "fixed top-0 bottom-0 w-[78%] max-w-[320px] bg-white z-[52] lg:hidden shadow-2xl flex flex-col p-6 overflow-y-auto no-scrollbar",
                 dir === 'ltr' ? "left-0" : "right-0"
               )}
             >
@@ -184,27 +214,34 @@ export default function Navbar() {
               </div>
 
               <div className="flex flex-col gap-1">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      'py-6 text-2xl font-bold flex items-center justify-between group border-b border-border/40 last:border-0 transition-all active:scale-[0.98]',
-                      pathname === link.href ? 'text-primary' : 'text-foreground/90',
-                      locale === 'ar' ? 'font-arabic text-3xl' : 'font-outfit'
-                    )}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <span>{link.name}</span>
-                    <ChevronRight 
-                      size={24} 
+                {navLinks.map((link) => {
+                  const isActive = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
                       className={cn(
-                        "text-primary/40 group-hover:text-primary transition-all duration-300", 
-                        dir === 'rtl' ? "rotate-180 group-hover:-translate-x-2" : "group-hover:translate-x-2"
-                      )} 
-                    />
-                  </Link>
-                ))}
+                        'py-6 text-2xl font-bold flex items-center justify-between group border-b border-border/40 last:border-0 transition-all active:scale-[0.98]',
+                        isActive ? 'text-primary shadow-sm px-2' : 'text-foreground/90',
+                        locale === 'ar' ? 'font-arabic text-3xl' : 'font-outfit'
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <div className="flex items-center gap-4">
+                        {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                        <span>{link.name}</span>
+                      </div>
+                      <ChevronRight 
+                        size={24} 
+                        className={cn(
+                          "text-primary/40 group-hover:text-primary transition-all duration-300", 
+                          dir === 'rtl' ? "rotate-180 group-hover:-translate-x-2" : "group-hover:translate-x-2",
+                          isActive && "text-primary opacity-100"
+                        )} 
+                      />
+                    </Link>
+                  );
+                })}
               </div>
 
               <div className="mt-auto pt-10 flex flex-col gap-6">

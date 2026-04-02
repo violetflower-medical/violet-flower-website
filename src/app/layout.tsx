@@ -3,6 +3,7 @@ import { Inter, Outfit, Cairo } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import { LanguageProvider } from "@/context/LanguageContext";
 
 const inter = Inter({
@@ -41,6 +42,7 @@ export default function RootLayout({
           <main className="flex-grow">
             {children}
           </main>
+          <WhatsAppButton />
           <Footer />
         </LanguageProvider>
       </body>
