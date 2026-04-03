@@ -71,7 +71,8 @@ export default function Navbar() {
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b',
         isScrolled 
           ? 'glass py-2 border-border/60 shadow-[0_4px_30px_rgba(0,0,0,0.03)]' 
-          : 'bg-transparent py-4 border-transparent'
+          : 'bg-transparent py-4 border-transparent',
+        isOpen && 'h-full z-[100] border-none'
       )}
     >
       <div className="container mx-auto px-4 md:px-8">
@@ -206,7 +207,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-secondary/60 backdrop-blur-md z-[65] lg:hidden"
+              className="fixed inset-0 bg-secondary/80 backdrop-blur-md z-[65] lg:hidden"
             />
             <motion.div
               initial={{ x: dir === 'ltr' ? '-100%' : '100%', opacity: 0.5 }}
@@ -214,8 +215,8 @@ export default function Navbar() {
               exit={{ x: dir === 'ltr' ? '-100%' : '100%', opacity: 0 }}
               transition={{ type: "spring", damping: 35, stiffness: 400 }}
               className={cn(
-                "fixed top-0 left-0 right-0 h-[100dvh] w-[78%] max-w-[320px] bg-white z-[70] lg:hidden shadow-[20px_0_60px_-15px_rgba(0,0,0,0.2)] flex flex-col p-8 overflow-y-auto no-scrollbar",
-                dir === 'ltr' ? "right-auto" : "left-auto"
+                "fixed inset-y-0 w-[78%] max-w-[320px] bg-white z-[70] lg:hidden shadow-[20px_0_60px_-15px_rgba(0,0,0,0.25)] flex flex-col p-8 overflow-y-auto no-scrollbar",
+                dir === 'ltr' ? "left-0" : "right-0"
               )}
             >
               <div className="flex items-center justify-between mb-12">
